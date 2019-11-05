@@ -1,0 +1,5 @@
+ 
+#! /bin/bash
+# Load the frame buffer drivers for the OLED panel
+
+modprobe fbtft_device name=sainsmart18 cs=0 speed=16000000 gpios=reset:22,dc:7 rotate=270

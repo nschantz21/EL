@@ -1,0 +1,15 @@
+ 
+#! /bin/bash
+# Unexport all the GPIOs used by matrix.
+
+echo 6 > /sys/class/gpio/unexport
+echo 13 > /sys/class/gpio/unexport
+echo 16 > /sys/class/gpio/unexport
+echo 19 > /sys/class/gpio/unexport
+echo 20 > /sys/class/gpio/unexport
+echo 21 > /sys/class/gpio/unexport
+echo 26 > /sys/class/gpio/unexport
+echo 25 > /sys/class/gpio/unexport
+
+# Delete the pcf8591 ADC
+echo 0x48 > /sys/bus/i2c/devices/i2c-1/delete_device
