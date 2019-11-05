@@ -20,6 +20,7 @@
 #include <signal.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <semaphore.h>
 
 #define DRIVER
 
@@ -48,9 +49,8 @@ int exportGPIOPin (int pin)
 	{
 		GPIO[pin - 2].export = 1;
 /*
- * There should be a simulation process waiting for
- * a connection from the library. If this is the first
- * time exportGPIOPin() has been called, connect to the
+ * There should be a simulation process waiting for a connection from the library.
+ * If this is the first time exportGPIOPin() has been called, connect to the
  * shared memory region of the simulator.
  *  */
 		if (++num_export == 1)
@@ -63,8 +63,9 @@ int exportGPIOPin (int pin)
 		    		printf ("Couldn't set up shared memory. Error: %s\n", strerror (errno));
 		        	return -1;
 			   }
-		    p->GPIOnum = p->GPIOvalue = 0;
-		// Get the devices output started
+		    p->GPIOmask = 0;
+			
+		// Get the device's output started
 		    kill (p->pid, SIGUSR1);
 		}
         return pin;
@@ -98,14 +99,13 @@ int getGPIOValue (int pin)
  * Return the current state of 'pin' if it has been exported
  */
 {
-	pin -= 2;
-    if (GPIO[pin].export)
+    if (GPIO[pin-2].export)
     {
-    	return GPIO[pin].value;
+    	return (p->GPIOmask >> pin) & 1;
     }
     else
     {
-    	printf ("Pin %d is not exported\n", pin + 2);
+    	printf ("Pin %d is not exported\n", pin);
     }
     return -1;
 }
@@ -117,16 +117,21 @@ size_t setGPIOValue (int pin, int value)
  * process is waiting on output changes. Returns positive value on success.
  */
 {
+	unsigned int mask = 1 << pin;
+	
 	pin -= 2;
     if (GPIO[pin].export)
     {
     	if (GPIO[pin].dir)
     	{
-    		GPIO[pin].value = value;
-    		p->GPIOnum = pin + 2;
-    		p->GPIOvalue = value;
+    		if (value)
+				p->GPIOmask |= mask;
+			else
+				p->GPIOmask &= ~mask;
+			
+		// Signal simulation
     		kill (p->pid, SIGUSR1);
-    		return 1;
+			return 1;
     	}
     	else
     	{

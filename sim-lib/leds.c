@@ -15,7 +15,7 @@
 static const int led[4] = {13, 6, 26, 19};
 static int ledfd[4];
 
-int init_leds (void)
+int init_leds (int rev)
 /*
  * Sets up the four LEDs on the Matrix Compact board.
  * On success, 'ledfd' is populated with open file

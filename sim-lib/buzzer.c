@@ -9,11 +9,11 @@
 
 #include "libmc-gpio.h"
 
-int init_buzzer (void)
+int init_buzzer (int rev)
 {
 	return 0;
 }
-void close_buzzer (void)
+void close_buzzer (int rev)
 {
 
 }

@@ -5,8 +5,7 @@
 #define SHM_KEY 1234		// shared memory key
 typedef struct {
 	unsigned int a2d;
-	unsigned int GPIOnum;
-	unsigned int GPIOvalue;
+	unsigned int GPIOmask;
 	pid_t pid;
 } shmem_t;
 #endif

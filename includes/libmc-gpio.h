@@ -15,6 +15,10 @@
 #define GPIO_ACTIVE_LOW         (1)
 #define GPIO_ACTIVE_HIGH        (0)
 
+// Matrix CK revision level
+#define REV_A	1
+#define REV_B	0
+
 #define PWM0       (96 + 1)  // GPIOD1
 #define PWM1       (64 + 13) // GPIOC13
 #define PWM2       (64 + 14) // GPIOC14
@@ -38,14 +42,14 @@ int setGPIOLow (int pin, int low);
 int getGPIOLow (int pin);
 
 // LED functions
-int init_leds (void);
+int init_leds (int rev);
 void close_leds (void);
 void ledON (int led);
 void ledOFF (int led);
 
 // Buzzer functions
-int init_buzzer (void);
-void close_buzzer (void);
+int init_buzzer (int rev);
+void close_buzzer (int rev);
 void buzzer (int freq, int len);
 
 // Pushbutton functions

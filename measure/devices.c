@@ -18,7 +18,7 @@
 #include "driver.h"
 
 shmem_t *p;
-static int led_mask = 0;
+static const int led_mask[] = {1 << 13, 1 << 6, 1 << 26, 1 << 19};
 
 const char *led (unsigned int which)
 /*
@@ -29,7 +29,7 @@ const char *led (unsigned int which)
 	static const char *blanks = "  ";
 	static const char *on = "ON";
 
-	if (led_mask & which)
+	if ((p->GPIOmask & which))
         return on;
     return blanks;
 }
@@ -41,21 +41,13 @@ void do_leds (int sig)
     connected to LEDs.
 */
 {
-    int y, x, i, mask = 1;
-    static const int leds[4] = {13, 6, 26, 19};
+    int y, x;
 
-    for (i = 0; i < 4; i++, mask <<= 1)
-    	if (p->GPIOnum == leds[i])
-    	{
-    		if (p->GPIOvalue)
-    			led_mask |= mask;
-    		else
-    			led_mask &= ~mask;
-    		break;
-    	}
     getyx (stdscr, y, x);
     move (3, 25);
-    printw ("Cooler  %s    Alarm %s    LED3 %s    LED4 %s", led (COOLER), led (ALARM), led (LED3), led (LED4));
+    printw ("Cooler  %s    Alarm %s    LED3 %s    LED4 %s",
+    			led (led_mask[COOLER]), led (led_mask[ALARM]),
+				led (led_mask[2]), led (led_mask[3]));
     move (y, x);
     refresh();
 }
